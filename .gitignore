@@ -1,0 +1,13 @@
+node_modules/
+.next/
+out/
+cache/
+broadcast/
+contracts/deployments/31337.json
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+next-env.d.ts
+*.tsbuildinfo
