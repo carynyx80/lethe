@@ -13,6 +13,7 @@ import { friendlyError } from "@/lib/tx";
 import { toast } from "@/lib/toast";
 import { activeChain } from "@/lib/wagmi";
 import { WalletButton } from "./Header";
+import { appConfig } from "@/lib/config";
 
 const MIN_SECONDS_TO_SEAL = 2.5; // leave room for the wallet prompt + inclusion before the phase ends
 
@@ -168,7 +169,7 @@ export function OrderTicket({
     </button>
   );
 
-  if (!market) cta = btn("Market not configured", undefined, "muted");
+  if (!market) cta = btn(appConfig.prelaunch ? "Opening soon · Mainnet coming" : "Market not configured", undefined, "muted");
   else if (!isConnected || chainId !== activeChain.id) cta = <WalletButton big />;
   else if (!balances) cta = btn("Loading balances…", undefined, "muted");
   else if (!hasAnyFunds) cta = btn("Get free test tokens", getTokens);

@@ -20,6 +20,18 @@ function env(name: string, required = true): string {
 
 const rpc = env("ELYSIUM_RPC_URL");
 const expected = Number(env("EXPECTED_CHAIN_ID"));
+
+// Pre-launch: no market deployed yet. Stay up and idle (no crash loop) until the variables are set;
+// setting them on the host restarts the service and it begins settling.
+if (!process.env.AUCTION_ADDRESS?.trim() || !process.env.KEEPER_PRIVATE_KEY?.trim()) {
+  const missing = ["AUCTION_ADDRESS", "KEEPER_PRIVATE_KEY"].filter((k) => !process.env[k]?.trim());
+  const note = () =>
+    console.log(new Date().toISOString(), `[keeper] pre-launch: waiting for ${missing.join(" and ")}. Mainnet coming.`);
+  note();
+  setInterval(note, 10 * 60_000);
+  await new Promise(() => {}); // idle forever
+}
+
 const auctionRaw = env("AUCTION_ADDRESS");
 const pk = env("KEEPER_PRIVATE_KEY") as Hex;
 const backfill = BigInt(process.env.BACKFILL_ROUNDS || "200");

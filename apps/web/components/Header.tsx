@@ -7,6 +7,7 @@ import { activeChain } from "@/lib/wagmi";
 import { friendlyError } from "@/lib/tx";
 import { toast } from "@/lib/toast";
 import clsx from "clsx";
+import { appConfig } from "@/lib/config";
 
 export function Header() {
   return (
@@ -16,7 +17,7 @@ export function Header() {
         <img src="/logo.svg" alt="" width={32} height={32} />
         <span className="text-lg font-semibold tracking-tight">Lethe</span>
         <span className="hidden rounded-full border border-line px-2 py-0.5 text-[11px] font-medium text-muted sm:inline">
-          testnet
+          {appConfig.prelaunch ? "mainnet coming" : "testnet"}
         </span>
       </a>
       <div className="flex items-center gap-2">

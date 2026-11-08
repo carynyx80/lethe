@@ -21,6 +21,8 @@ function resolve() {
   if (!auction) problems.push("NEXT_PUBLIC_AUCTION_ADDRESS is not set to a deployed LetheAuction.");
   const rpcUrl = process.env.NEXT_PUBLIC_RPC_URL || chain?.rpcUrls.default.http[0];
   return {
+    /** Chain is fine but no market is deployed yet: show the launch state, not an error. */
+    prelaunch: !!chain && !auction && problems.length === 1,
     chain,
     auction,
     rpcUrl,

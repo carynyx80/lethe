@@ -10,6 +10,7 @@ import { AccountPanel } from "@/components/AccountPanel";
 import { MyOrders } from "@/components/MyOrders";
 import { HowItWorks } from "@/components/HowItWorks";
 import { Toasts } from "@/components/Toasts";
+import { LaunchBanner } from "@/components/LaunchBanner";
 import { appConfig } from "@/lib/config";
 import { useClock, useMarket, useRecentResults } from "@/lib/market";
 import { useBalances } from "@/lib/balances";
@@ -64,7 +65,8 @@ export default function Home() {
           </p>
         </div>
 
-        {!appConfig.ready && (
+        {appConfig.prelaunch && <LaunchBanner />}
+        {!appConfig.ready && !appConfig.prelaunch && (
           <div className="card mb-6 border-warn/40 p-4 text-sm text-warn">
             <b>Not configured.</b> {appConfig.problems.join(" ")} Trading is disabled.
           </div>
@@ -103,7 +105,9 @@ export default function Home() {
         </div>
       </main>
       <footer className="relative z-10 mx-auto max-w-6xl px-4 pb-10 text-xs text-faint sm:px-6">
-        Lethe runs on Elysium testnet. Test tokens are valueless. Unaudited software, use at your own risk.
+        {appConfig.prelaunch
+          ? "Lethe is launching on Elysium. Mainnet coming soon."
+          : "Lethe runs on Elysium testnet. Test tokens are valueless. Unaudited software, use at your own risk."}
       </footer>
       <Toasts />
     </>
