@@ -71,7 +71,7 @@ contract LetheAuctionTest is Test {
         o = Ord(who, isBuy, price, amount, keccak256(abi.encode(who, price, amount, round, gasleft())), 0);
         bytes32 h = auction.commitmentHash(round, who, isBuy, price, amount, o.salt);
         vm.prank(who);
-        (, o.index) = auction.commit(h);
+        o.index = auction.commit(round, h);
     }
 
     function _reveal(uint256 round, Ord memory o) internal {
@@ -175,6 +175,29 @@ contract LetheAuctionTest is Test {
         _assertSolvent();
     }
 
+    function test_resultsRange() public {
+        uint256 r = auction.currentRound();
+        Ord memory b = _commit(alice, true, _price(30), ONE);
+        Ord memory s = _commit(bob, false, _price(30), ONE);
+        _toReveal(r);
+        _reveal(r, b);
+        _reveal(r, s);
+        _toEnd(r);
+        auction.settle(r);
+        LetheAuction.RoundResult[] memory rs = auction.resultsRange(r, 2);
+        assertTrue(rs[0].settled);
+        assertEq(rs[0].price, _price(30));
+        assertFalse(rs[1].settled);
+    }
+
+    function test_delayedCommitForOldRoundReverts() public {
+        uint256 r = auction.currentRound();
+        _toEnd(r); // next round's commit phase
+        vm.prank(alice);
+        vm.expectRevert(LetheAuction.WrongRound.selector);
+        auction.commit(r, bytes32(uint256(1)));
+    }
+
     function test_emptyRoundSettles() public {
         uint256 r = auction.currentRound();
         _toEnd(r);
@@ -271,7 +294,7 @@ contract LetheAuctionTest is Test {
         Ord memory o = _commit(alice, true, _price(30), ONE);
         bytes32 h = auction.getOrder(r, o.index).commitment;
         vm.prank(bob);
-        (, uint256 bi) = auction.commit(h);
+        uint256 bi = auction.commit(r, h);
         _toReveal(r);
         vm.expectRevert(LetheAuction.CommitmentMismatch.selector);
         auction.reveal(r, bi, true, _price(30), ONE, o.salt);
@@ -308,7 +331,7 @@ contract LetheAuctionTest is Test {
         // commit during reveal
         vm.prank(bob);
         vm.expectRevert(abi.encodeWithSelector(LetheAuction.WrongPhase.selector, LetheAuction.Phase.Reveal));
-        auction.commit(bytes32(uint256(1)));
+        auction.commit(r, bytes32(uint256(1)));
         _toEnd(r);
         // reveal after end
         vm.expectRevert(abi.encodeWithSelector(LetheAuction.WrongPhase.selector, LetheAuction.Phase.Settleable));
@@ -326,10 +349,10 @@ contract LetheAuctionTest is Test {
         vm.startPrank(alice);
         quote.approve(address(small), type(uint256).max);
         small.deposit(address(quote), 10e6);
-        small.commit(bytes32(uint256(1)));
-        small.commit(bytes32(uint256(2)));
+        small.commit(0, bytes32(uint256(1)));
+        small.commit(0, bytes32(uint256(2)));
         vm.expectRevert(LetheAuction.RoundFull.selector);
-        small.commit(bytes32(uint256(3)));
+        small.commit(0, bytes32(uint256(3)));
         vm.stopPrank();
     }
 

@@ -106,6 +106,7 @@ contract LetheAuction is ReentrancyGuard {
     error CommitmentMismatch();
     error InvalidOrder();
     error InvalidConfig();
+    error WrongRound();
 
     constructor(
         IERC20 baseToken_,
@@ -222,9 +223,12 @@ contract LetheAuction is ReentrancyGuard {
         return keccak256(abi.encode(block.chainid, address(this), round, trader, isBuy, price, amount, salt));
     }
 
-    /// @notice Seal an order into the current round. Takes `bond` quote from the free balance.
-    function commit(bytes32 commitment) external nonReentrant returns (uint256 round, uint256 index) {
-        round = currentRound();
+    /// @notice Seal an order into `round`, which must be the round currently accepting commits.
+    ///         Naming the round makes a delayed transaction revert instead of landing in a later
+    ///         round where its commitment (bound to `round`) could never be revealed.
+    ///         Takes `bond` quote from the free balance.
+    function commit(uint256 round, bytes32 commitment) external nonReentrant returns (uint256 index) {
+        if (round != currentRound()) revert WrongRound();
         Phase p = phase(round);
         if (p != Phase.Commit) revert WrongPhase(p);
         Order[] storage list = _orders[round];
@@ -489,6 +493,14 @@ contract LetheAuction is ReentrancyGuard {
 
     function getOrders(uint256 round) external view returns (Order[] memory) {
         return _orders[round];
+    }
+
+    /// @notice Results for rounds [from, from + count), for price history.
+    function resultsRange(uint256 from, uint256 count) external view returns (RoundResult[] memory out) {
+        out = new RoundResult[](count);
+        for (uint256 i; i < count; ++i) {
+            out[i] = results[from + i];
+        }
     }
 
     /// @notice Everything the UI needs for the clock in one call.

@@ -1,0 +1,25 @@
+{
+  "name": "lethe",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/*",
+    "services/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w @lethe/web",
+    "build": "npm run build -w @lethe/web",
+    "keeper": "npm run start -w @lethe/keeper",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
+    "abi": "node contracts/export-abis.mjs",
+    "test:contracts": "cd contracts && forge test",
+    "local": "bash scripts/local.sh"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
