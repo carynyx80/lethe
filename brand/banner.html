@@ -1,0 +1,49 @@
+<link rel=stylesheet href=style.css>
+<style>
+.b{width:1500px;height:500px;position:relative;overflow:hidden;background:#06070c}
+.glow1{position:absolute;width:900px;height:900px;left:-250px;top:-350px;background:radial-gradient(circle,rgba(154,140,255,.22),transparent 60%)}
+.glow2{position:absolute;width:900px;height:900px;right:-300px;top:-200px;background:radial-gradient(circle,rgba(63,224,192,.16),transparent 60%)}
+.grid{position:absolute;inset:0;background-image:linear-gradient(#ffffff08 1px,transparent 1px),linear-gradient(90deg,#ffffff08 1px,transparent 1px);background-size:50px 50px;mask-image:radial-gradient(ellipse at 60% 50%,#000 30%,transparent 75%)}
+.t{position:absolute;left:150px;top:120px}
+.word{display:flex;align-items:center;gap:22px;font-size:84px;font-weight:650;letter-spacing:-3px}
+.word svg{width:82px;height:82px}
+h2{margin-top:26px;font-size:46px;font-weight:600;letter-spacing:-1.4px}
+h2 span{background:linear-gradient(90deg,#9a8cff,#3fe0c0);-webkit-background-clip:text;color:transparent}
+p{margin-top:14px;font-size:21px;line-height:1.45;color:#8b91a8;max-width:600px}
+.pill{position:absolute;right:80px;bottom:56px;font-family:GM;font-size:15px;letter-spacing:2px;text-transform:uppercase;color:#3fe0c0;border:1px solid #3fe0c055;background:#3fe0c010;border-radius:999px;padding:9px 18px;display:flex;align-items:center;gap:10px}
+.pill i{width:8px;height:8px;border-radius:50%;background:#3fe0c0;box-shadow:0 0 12px #3fe0c0}
+.lab{font-family:GM;font-size:12px;letter-spacing:2px;text-transform:uppercase;fill:#5a6078}
+</style>
+<div class=b><div class=glow1></div><div class=glow2></div><div class=grid></div>
+<svg id=viz width=1500 height=500 style="position:absolute;inset:0"></svg>
+<div class=t>
+ <div class=word><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <linearGradient id="g" x1="12" y1="10" x2="52" y2="54" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#9A8CFF"/>
+      <stop offset="1" stop-color="#3FE0C0"/>
+    </linearGradient>
+  </defs>
+  <path d="M23 13v28h19" stroke="url(#g)" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M13 50c6.3-4.2 12.7-4.2 19 0s12.7 4.2 19 0" stroke="url(#g)" stroke-width="3.2" stroke-linecap="round" opacity=".75"/>
+</svg><span>Lethe</span></div>
+ <h2>Trade sealed. <span>Clear fair.</span></h2>
+ <p>Sealed-bid batch auctions on Elysium. One price per round, nothing for bots to front-run.</p>
+</div>
+<div class=pill><i></i>Mainnet coming</div>
+</div>
+<script>
+const s=document.getElementById('viz'),NS='http://www.w3.org/2000/svg';
+let seed=7;const r=()=>(seed=(seed*16807)%2147483647)/2147483647;
+const add=(t,a)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);s.appendChild(e);return e};
+s.innerHTML='<defs><linearGradient id=lg x1=0 x2=1><stop stop-color="#9a8cff"/><stop offset="1" stop-color="#3fe0c0"/></linearGradient></defs>';
+const X0=930,XR=1150,XE=1430,Y=250;
+add('line',{x1:XR,y1:70,x2:XR,y2:430,stroke:'#2a3047','stroke-dasharray':'4 6'});
+for(let i=0;i<34;i++){const x=X0+r()*(XR-X0-40),y=90+r()*320;
+ add('path',{d:`M${x} ${y} C ${XR} ${y}, ${XR+40} ${Y}, ${XE-60} ${Y}`,stroke:'url(#lg)','stroke-width':1.2,fill:'none',opacity:.35});
+ add('circle',{cx:x,cy:y,r:5+r()*3,fill:'#0d0f17',stroke:'#9a8cff','stroke-width':1.6,opacity:.6+r()*.4});}
+add('line',{x1:XE-60,y1:Y,x2:XE,y2:Y,stroke:'#3fe0c0','stroke-width':2.5});
+add('circle',{cx:XE,cy:Y,r:7,fill:'#3fe0c0',style:'filter:drop-shadow(0 0 10px #3fe0c0)'});
+const l=(x,y,t,a)=>{const e=add('text',{x,y,class:'lab','text-anchor':a||'start'});e.textContent=t};
+l(X0,70,'sealed orders');l(XR+10,70,'reveal');l(XE,Y-22,'one price','end');
+</script>

@@ -1,0 +1,4 @@
+@font-face{font-family:G;src:url(file:///home/user/lethe/node_modules/geist/dist/fonts/geist-sans/Geist-Variable.woff2)}
+@font-face{font-family:GM;src:url(file:///home/user/lethe/node_modules/geist/dist/fonts/geist-mono/GeistMono-Variable.woff2)}
+*{margin:0;box-sizing:border-box}
+body{background:#06070c;font-family:G,sans-serif;color:#eceef6}
