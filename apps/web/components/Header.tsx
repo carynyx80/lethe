@@ -14,7 +14,7 @@ export function Header() {
     <header className="relative z-10 mx-auto flex w-full max-w-6xl items-center justify-between gap-3 px-4 py-4 sm:px-6">
       <a href="/" className="flex items-center gap-2.5" aria-label="Lethe home">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/logo.svg" alt="" width={32} height={32} />
+        <img src="/logo.svg" alt="" width={30} height={30} />
         <span className="text-lg font-semibold tracking-tight">Lethe</span>
         <span className="hidden rounded-full border border-line px-2 py-0.5 text-[11px] font-medium text-muted sm:inline">
           {appConfig.prelaunch ? "mainnet coming" : "testnet"}
